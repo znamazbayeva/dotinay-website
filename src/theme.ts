@@ -80,7 +80,7 @@ const theme = createTheme({
   shape: {
     borderRadius: 18,
   },
-  shadows: Array(25).fill("none"),
+  shadows: Array(25).fill("none") as any,
 });
 
 export default theme;
