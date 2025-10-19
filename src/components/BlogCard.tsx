@@ -5,7 +5,7 @@ import Link from "next/link";
 
 interface BlogCardProps {
   title: string;
-  desc: string;
+  desc?: string;
   slug: string;
   category?: string;
   date?: string;
@@ -16,8 +16,17 @@ export default function BlogCard({
   desc,
   slug,
   category = "Article",
-  date = "2025-01-01",
+  date,
 }: BlogCardProps) {
+  // Format date if exists
+  const formattedDate = date
+    ? new Date(date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : "";
+
   return (
     <motion.div
       whileHover={{
@@ -31,53 +40,41 @@ export default function BlogCard({
         href={`/blog/${slug}`}
         elevation={0}
         sx={{
-          borderRadius: "28px",
-          backgroundColor: "#FFFFFF", // TRUE WHITE card
+          borderRadius: "20px",
+          backgroundColor: "#fff",
           textDecoration: "none",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
           height: "100%",
-          transition: "all 0.3s ease",
+          "&:hover": { boxShadow: "0 4px 16px rgba(0,0,0,0.1)" },
         }}
       >
         <CardContent sx={{ p: 4 }}>
           {/* Category + Date */}
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={2}
-          >
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
             <Chip
               label={category}
               size="small"
               sx={{
-                fontSize: "1.00rem",
+                fontSize: "0.9rem",
                 fontWeight: 500,
                 bgcolor: "#E0F2FE",
                 color: "#0369A1",
                 borderRadius: "9999px",
                 px: 1.5,
-                boxShadow: "0 2px 6px rgba(3,105,161,0.1)",
               }}
             />
-            <Typography
-              variant="caption"
-              color="#94A3B8"
-              fontWeight={500}
-              sx={{ fontSize: "1.00rem" }}
-            >
-              {date}
-            </Typography>
+            {formattedDate && (
+              <Typography variant="caption" color="#94A3B8" fontWeight={500}>
+                {formattedDate}
+              </Typography>
+            )}
           </Box>
 
           {/* Title */}
           <Typography
-            variant="subtitle1"
+            variant="h6"
             fontWeight={700}
-            sx={{
-              mb: 1,
-              color: "#1E293B",
-              lineHeight: 1.5,
-            }}
+            sx={{ mb: 1, color: "#1E293B", lineHeight: 1.4 }}
           >
             {title}
           </Typography>
@@ -85,13 +82,9 @@ export default function BlogCard({
           {/* Description */}
           <Typography
             variant="body2"
-            sx={{
-              color: "#475569",
-              lineHeight: 1.7,
-              fontSize: "1.2rem",
-            }}
+            sx={{ color: "#475569", lineHeight: 1.7, fontSize: "1rem" }}
           >
-            {desc}
+            {desc || "Click to read more..."}
           </Typography>
         </CardContent>
       </Card>
