@@ -71,7 +71,7 @@ export default function Blog() {
         </Typography>
       </Box>
 
-      <Stack spacing={3}>
+      <Stack spacing={1}>
         {posts.map((post, index) => {
           const plainText = post.html
             ? post.html.replace(/<[^>]+>/g, "").slice(0, 140) + "..."
