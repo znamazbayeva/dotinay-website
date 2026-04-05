@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import CommentsSection from "../../components/CommentsSection";
 import {
   Container,
   Typography,
@@ -17,6 +18,12 @@ export default function BlogPost() {
 
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
+useEffect(() => {
+  setIsAdmin(localStorage.getItem("isAdmin") === "true");
+}, []);
 
 useEffect(() => {
   async function fetchPost() {
@@ -78,7 +85,7 @@ useEffect(() => {
       }}
     >
       {/* Header */}
-      <Box textAlign="center" mb={8}>
+      <Box textAlign="center" mb={0}>
         <Typography
           variant="h3"
           fontWeight={700}
@@ -125,7 +132,7 @@ useEffect(() => {
         </Stack>
 
         {/* Tags directly below category/date */}
-        {post.tags && (
+        {/* {post.tags && (
           <Stack
             direction="row"
             justifyContent="center"
@@ -147,7 +154,7 @@ useEffect(() => {
               />
             ))}
           </Stack>
-        )}
+        )} */}
       </Box>
 
       {/* HTML content */}
@@ -159,12 +166,12 @@ useEffect(() => {
           "& h1, & h2, & h3": {
             color: "#0F172A",
             fontWeight: 700,
-            mt: 5,
-            mb: 2,
+            mt: 2,
+            mb: 0,
           },
           "& h2": { fontSize: "1.8rem" },
-          "& p": { mb: 3 },
-          "& ul, & ol": { pl: 4, mb: 3 },
+          "& p": { mb: 0 },
+          "& ul, & ol": { pl: 4, mb: 0 },
           "& a": {
             color: "#0284C7",
             textDecoration: "underline",
@@ -173,6 +180,7 @@ useEffect(() => {
         }}
         dangerouslySetInnerHTML={{ __html: post.html }}
       />
+      <CommentsSection slug={slug} isAdmin={isAdmin} />
     </Container>
   );
 }
