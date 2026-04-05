@@ -14,6 +14,8 @@ export default function EditPost() {
     pk: "",
     title: "",
     category: "",
+    description: "",
+    coverImage: "",
     html: "",
     tags: "",
   });
@@ -35,12 +37,16 @@ export default function EditPost() {
         }
 
         const data = await res.json();
-        const item = Array.isArray(data) ? data[0] : data;
+        const item = Array.isArray(data)
+          ? data.find((p) => p.slug === slug) || data[0]
+          : data;
 
         setPost({
           pk: item.pk || "",
           title: item.title || "",
           category: item.category || "",
+          description: item.description || "",
+          coverImage: item.coverImage || "",
           html: item.html || "",
           tags: Array.isArray(item.tags) ? item.tags.join(", ") : "",
         });
@@ -65,6 +71,8 @@ export default function EditPost() {
           : slug,
         title: post.title,
         category: post.category,
+        description: post.description,
+        coverImage: post.coverImage,
         date: new Date().toISOString(),
         html: post.html,
         tags: post.tags
@@ -118,6 +126,24 @@ export default function EditPost() {
         sx={{ mb: 2 }}
         value={post.category}
         onChange={(e) => setPost({ ...post, category: e.target.value })}
+      />
+
+      <TextField
+        label="Description"
+        fullWidth
+        multiline
+        minRows={3}
+        sx={{ mb: 2 }}
+        value={post.description}
+        onChange={(e) => setPost({ ...post, description: e.target.value })}
+      />
+
+      <TextField
+        label="Cover Image URL"
+        fullWidth
+        sx={{ mb: 2 }}
+        value={post.coverImage}
+        onChange={(e) => setPost({ ...post, coverImage: e.target.value })}
       />
 
       <TextField

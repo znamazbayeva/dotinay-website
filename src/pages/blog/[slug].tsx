@@ -1,5 +1,5 @@
 "use client";
-
+import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -81,7 +81,18 @@ export default function BlogPost() {
       })
     : "";
 
-  return (
+return (
+  <>
+<Head>
+  <title>{post.title}</title>
+  <meta name="description" content={post.description} />
+
+  <meta property="og:title" content={post.title} />
+  <meta property="og:description" content={post.description} />
+  <meta property="og:image" content={post.coverImage} />
+  <meta property="og:url" content={`https://dotinay.com/blog/${slug}`} />
+  <meta property="og:type" content="article" />
+</Head>
     <Container
       maxWidth="md"
       sx={{
@@ -187,5 +198,6 @@ export default function BlogPost() {
 
       <CommentsSection slug={slug} isAdmin={isAdmin} />
     </Container>
+      </>
   );
 }

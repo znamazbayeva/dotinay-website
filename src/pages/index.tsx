@@ -5,17 +5,41 @@ import {
   Box,
   Button,
   Grid,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
 } from "@mui/material";
+import Head from "next/head";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router"; 
 
 export default function Home() {
   const router = useRouter();
   return (
+      <>
+    <Head>
+      <title>Dotinay — Personal Blog</title>
+
+      <meta
+        name="description"
+        content="A personal blog about software engineering, books, and creative thoughts."
+      />
+
+      {/* Open Graph (for sharing) */}
+      <meta property="og:title" content="Dotinay — Personal Blog" />
+      <meta
+        property="og:description"
+        content="A personal blog about software engineering, books, and creative thoughts."
+      />
+      <meta property="og:url" content="https://dotinay.com" />
+      <meta property="og:site_name" content="Dotinay" />
+      <meta property="og:type" content="website" />
+
+      <meta
+        property="og:image"
+        content="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif"
+      />
+
+      {/* Mobile / SEO */}
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </Head>
     <Box
       sx={{
         backgroundColor: "#f9fafb", // soft white pastel background
@@ -144,5 +168,6 @@ export default function Home() {
         </Grid>
       </Container>
     </Box>
+    </>
   );
 }
