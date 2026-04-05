@@ -18,25 +18,30 @@ export default function BlogPost() {
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchPost() {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/posts/${slug}?pk=POST#2025-10`
-        );
-        const data = await res.json();
+useEffect(() => {
+  async function fetchPost() {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/${slug}`
+      );
 
-        const first = Array.isArray(data) ? data[0] : data;
-        setPost(first || null);
-      } catch (err) {
-        console.error("Error fetching post:", err);
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch post: ${res.status}`);
       }
-    }
 
-    fetchPost();
-  }, [slug]);
+      const data = await res.json();
+      const first = Array.isArray(data) ? data[0] : data;
+      setPost(first || null);
+    } catch (err) {
+      console.error("Error fetching post:", err);
+      setPost(null);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (slug) fetchPost();
+}, [slug]);
 
   if (loading) {
     return (

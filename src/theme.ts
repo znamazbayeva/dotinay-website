@@ -81,6 +81,32 @@ const theme = createTheme({
     borderRadius: 18,
   },
   shadows: Array(25).fill("none") as any,
+   components: {
+  MuiCssBaseline: {
+    styleOverrides: {
+      blockquote: {
+        margin: "28px 0",
+        padding: "18px 22px",
+        background: "#EEF5FF",
+        borderLeft: "4px solid #4D9BE6",
+        borderRadius: "12px",
+        color: "#334155",
+        fontStyle: "normal",
+        fontSize: "1.12rem",
+        lineHeight: 1.85,
+        boxShadow: "0 4px 12px rgba(15, 23, 42, 0.06)",
+      },
+
+      "blockquote p": {
+        margin: 0,
+      },
+
+      "blockquote::before": {
+        content: 'none',
+      },
+    },
+  },
+},
 });
 
 export default theme;

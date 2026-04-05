@@ -18,11 +18,30 @@ export default function Dashboard() {
   }, []);
 
   const handleDelete = async (slug: string, pk: string) => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${slug}?pk=${pk}`, {
-      method: "DELETE",
-      headers: { "x-admin-key": process.env.NEXT_PUBLIC_ADMIN_KEY! },
-    });
-    setPosts((prev) => prev.filter((p) => p.slug !== slug));
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/posts/${slug}?pk=${encodeURIComponent(pk)}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-key": process.env.NEXT_PUBLIC_ADMIN_KEY || "",
+          },
+        }
+      );
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Delete failed:", res.status, text);
+        alert(`Delete failed: ${res.status} ${text}`);
+        return;
+      }
+
+      setPosts((prev) => prev.filter((p) => !(p.slug === slug && p.pk === pk)));
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("Something went wrong while deleting the post.");
+    }
   };
 
   return (

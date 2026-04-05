@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Container, TextField, Button, Typography } from "@mui/material";
@@ -10,50 +11,91 @@ export default function EditPost() {
   const isNew = slug === "new";
 
   const [post, setPost] = useState({
+    pk: "",
     title: "",
     category: "",
     html: "",
     tags: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    if (localStorage.getItem("isAdmin") !== "true") router.push("/admin/login");
+    if (localStorage.getItem("isAdmin") !== "true") {
+      router.push("/admin/login");
+      return;
+    }
+
+    async function loadPost() {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${slug}`);
+
+        if (!res.ok) {
+          throw new Error(`Failed to load post: ${res.status}`);
+        }
+
+        const data = await res.json();
+        const item = Array.isArray(data) ? data[0] : data;
+
+        setPost({
+          pk: item.pk || "",
+          title: item.title || "",
+          category: item.category || "",
+          html: item.html || "",
+          tags: Array.isArray(item.tags) ? item.tags.join(", ") : "",
+        });
+      } catch (err) {
+        console.error("Failed to load post:", err);
+      }
+    }
 
     if (!isNew) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts/${slug}?pk=POST#2025-10`)
-        .then((res) => res.json())
-        .then((data) =>
-          setPost({
-            title: data.title.S,
-            category: data.category.S,
-            html: data.html.S,
-            tags: data.tags.L.map((t: any) => t.S).join(", "),
-          })
-        );
+      loadPost();
     }
-  }, [slug]);
+  }, [slug, isNew, router]);
 
   const handleSave = async () => {
-    const newPost = {
-      pk: `POST#${new Date().toISOString().slice(0, 7)}`,
-      slug: isNew ? post.title.toLowerCase().replace(/\s+/g, "-") : slug,
-      title: post.title,
-      category: post.category,
-      date: new Date().toISOString(),
-      html: post.html,
-      tags: post.tags.split(",").map((t) => t.trim()),
-    };
+    try {
+      setLoading(true);
 
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-admin-key": process.env.NEXT_PUBLIC_ADMIN_KEY!,
-      },
-      body: JSON.stringify(newPost),
-    });
+      const payload = {
+        pk: isNew ? `POST#${new Date().toISOString().slice(0, 7)}` : post.pk,
+        slug: isNew
+          ? post.title.toLowerCase().trim().replace(/\s+/g, "-")
+          : slug,
+        title: post.title,
+        category: post.category,
+        date: new Date().toISOString(),
+        html: post.html,
+        tags: post.tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
+      };
 
-    router.push("/admin/dashboard");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": process.env.NEXT_PUBLIC_ADMIN_KEY || "",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Save failed:", res.status, text);
+        alert(`Save failed: ${res.status}`);
+        return;
+      }
+
+      router.push("/admin/dashboard");
+    } catch (err) {
+      console.error("Error saving post:", err);
+      alert("Something went wrong while saving the post.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -69,6 +111,7 @@ export default function EditPost() {
         value={post.title}
         onChange={(e) => setPost({ ...post, title: e.target.value })}
       />
+
       <TextField
         label="Category"
         fullWidth
@@ -76,15 +119,17 @@ export default function EditPost() {
         value={post.category}
         onChange={(e) => setPost({ ...post, category: e.target.value })}
       />
+
       <TextField
         label="HTML Content"
         fullWidth
         multiline
-        minRows={6}
+        minRows={8}
         sx={{ mb: 2 }}
         value={post.html}
         onChange={(e) => setPost({ ...post, html: e.target.value })}
       />
+
       <TextField
         label="Tags (comma-separated)"
         fullWidth
@@ -92,8 +137,9 @@ export default function EditPost() {
         value={post.tags}
         onChange={(e) => setPost({ ...post, tags: e.target.value })}
       />
-      <Button variant="contained" onClick={handleSave}>
-        💾 Save
+
+      <Button variant="contained" onClick={handleSave} disabled={loading}>
+        {loading ? "Saving..." : "💾 Save"}
       </Button>
     </Container>
   );
