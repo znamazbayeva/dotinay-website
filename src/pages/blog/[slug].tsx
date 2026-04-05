@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import CommentsSection from "../../components/CommentsSection";
 import {
   Container,
@@ -11,44 +12,48 @@ import {
   CircularProgress,
   Stack,
 } from "@mui/material";
+import { useRouter } from "next/navigation";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Button } from "@mui/material";
+import { motion } from "framer-motion";
 
 export default function BlogPost() {
   const params = useParams();
   const slug = params.slug as string;
+  const router = useRouter();
 
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
   const [isAdmin, setIsAdmin] = useState(false);
 
-useEffect(() => {
-  setIsAdmin(localStorage.getItem("isAdmin") === "true");
-}, []);
+  useEffect(() => {
+    setIsAdmin(localStorage.getItem("isAdmin") === "true");
+  }, []);
 
-useEffect(() => {
-  async function fetchPost() {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/posts/${slug}`
-      );
+  useEffect(() => {
+    async function fetchPost() {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/posts/${slug}`
+        );
 
-      if (!res.ok) {
-        throw new Error(`Failed to fetch post: ${res.status}`);
+        if (!res.ok) {
+          throw new Error(`Failed to fetch post: ${res.status}`);
+        }
+
+        const data = await res.json();
+        const first = Array.isArray(data) ? data[0] : data;
+        setPost(first || null);
+      } catch (err) {
+        console.error("Error fetching post:", err);
+        setPost(null);
+      } finally {
+        setLoading(false);
       }
-
-      const data = await res.json();
-      const first = Array.isArray(data) ? data[0] : data;
-      setPost(first || null);
-    } catch (err) {
-      console.error("Error fetching post:", err);
-      setPost(null);
-    } finally {
-      setLoading(false);
     }
-  }
 
-  if (slug) fetchPost();
-}, [slug]);
+    if (slug) fetchPost();
+  }, [slug]);
 
   if (loading) {
     return (
@@ -84,14 +89,31 @@ useEffect(() => {
         px: { xs: 2, sm: 4 },
       }}
     >
-      {/* Header */}
+      <motion.div whileHover={{ x: -3 }}>
+  <Button
+    onClick={() => router.push("/blog")}
+    startIcon={<ArrowBackIcon />}
+    sx={{
+      textTransform: "none",
+      fontWeight: 500,
+      color: "#64748B",
+      px: 1,
+      "&:hover": {
+        color: "#0F172A",
+        bgcolor: "transparent",
+      },
+    }}
+  >
+    Back to blog
+  </Button>
+</motion.div>
       <Box textAlign="center" mb={0}>
         <Typography
           variant="h3"
           fontWeight={700}
           mb={2}
           sx={{
-            fontSize: { xs: "2rem", md: "2.6rem" }, // ✨ bigger main title
+            fontSize: { xs: "2rem", md: "2.6rem" },
             color: "#0F172A",
             lineHeight: 1.3,
           }}
@@ -99,7 +121,6 @@ useEffect(() => {
           {post.title}
         </Typography>
 
-        {/* Category + Date */}
         <Stack
           direction="row"
           justifyContent="center"
@@ -109,6 +130,9 @@ useEffect(() => {
         >
           {post.category && (
             <Chip
+              component={Link}
+              href={`/blog?category=${encodeURIComponent(post.category)}`}
+              clickable
               label={post.category}
               size="small"
               sx={{
@@ -117,9 +141,15 @@ useEffect(() => {
                 fontWeight: 600,
                 fontSize: "0.95rem",
                 px: 1.5,
+                textDecoration: "none",
+                cursor: "pointer",
+                "&:hover": {
+                  bgcolor: "#BAE6FD",
+                },
               }}
             />
           )}
+
           {formattedDate && (
             <Typography
               variant="subtitle1"
@@ -130,37 +160,11 @@ useEffect(() => {
             </Typography>
           )}
         </Stack>
-
-        {/* Tags directly below category/date */}
-        {/* {post.tags && (
-          <Stack
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            spacing={1}
-            flexWrap="wrap"
-          >
-            {post.tags.map((tag: string) => (
-              <Chip
-                key={tag}
-                label={tag}
-                size="small"
-                sx={{
-                  bgcolor: "#F1F5F9",
-                  color: "#334155",
-                  fontWeight: 500,
-                  fontSize: "0.9rem",
-                }}
-              />
-            ))}
-          </Stack>
-        )} */}
       </Box>
 
-      {/* HTML content */}
       <Box
         sx={{
-          fontSize: { xs: "1.15rem", md: "1.25rem" }, // ✨ larger readable body
+          fontSize: { xs: "1.15rem", md: "1.25rem" },
           lineHeight: 1.9,
           color: "#1E293B",
           "& h1, & h2, & h3": {
@@ -180,6 +184,7 @@ useEffect(() => {
         }}
         dangerouslySetInnerHTML={{ __html: post.html }}
       />
+
       <CommentsSection slug={slug} isAdmin={isAdmin} />
     </Container>
   );
