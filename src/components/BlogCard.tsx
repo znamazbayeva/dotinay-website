@@ -66,7 +66,11 @@ export default function BlogCard({
               {title}
             </Typography>
 
-            <Typography variant="body2" sx={{ color: "#475569", lineHeight: 1.7, fontSize: "1rem" }}>
+            <Typography variant="body2"  sx={{ color: "#475569", lineHeight: 1.7, fontSize: "1rem", display: "-webkit-box",
+WebkitLineClamp: 2,
+WebkitBoxOrient: "vertical",
+overflow: "hidden",
+textOverflow: "ellipsis",}}>
               {desc || "Click to read more..."}
             </Typography>
           </CardContent>

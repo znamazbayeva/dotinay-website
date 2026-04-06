@@ -149,7 +149,7 @@ export default function Blog() {
         <Stack spacing={2}>
           {filteredPosts.map((post, index) => {
             const plainText = post.html
-              ? post.html.replace(/<[^>]+>/g, "").slice(0, 140) + "..."
+              ? post.html.replace(/<[^>]+>/g, "").trim()
               : "Click to read more...";
 
             return (
