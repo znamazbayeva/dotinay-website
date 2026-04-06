@@ -146,7 +146,7 @@ export default function Blog() {
           </Typography>
         </Box>
       ) : (
-        <Stack spacing={1}>
+        <Stack spacing={2}>
           {filteredPosts.map((post, index) => {
             const plainText = post.html
               ? post.html.replace(/<[^>]+>/g, "").slice(0, 140) + "..."
