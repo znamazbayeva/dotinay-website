@@ -44,7 +44,7 @@ export default function Navbar() {
 
         {/* Navigation */}
         <div>
-          {["/", "/about", "/blog"].map((path) => (
+          {["/", "/about", "/cv", "/blog"].map((path) => (
             <Button
               key={path}
               component={Link}
