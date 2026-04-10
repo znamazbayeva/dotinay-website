@@ -8,14 +8,14 @@ const theme = createTheme({
     secondary: {
       main: "#F2B880", // warm accent
     },
-    background: {
-      default: "#EAF2FB", // soft pastel background
-      paper: "#FFFFFF",
-    },
-    text: {
-      primary: "#1B1F23",
-      secondary: "#475569",
-    },
+background: {
+  default: "#EEF4FA",
+  paper: "#FFFFFF",
+},
+text: {
+  primary: "#0F172A",
+  secondary: "#475569",
+},
   },
   typography: {
     fontFamily: "inherit",
@@ -56,18 +56,18 @@ const theme = createTheme({
     },
 
     // Body text
-    body1: {
-      fontSize: "1.35rem", // ~22px
-      lineHeight: 2.0,
-      color: "#334155",
-      letterSpacing: "0.015em",
-    },
-    body2: {
-      fontSize: "1.15rem", // ~18px
-      lineHeight: 1.9,
-      color: "#475569",
-      letterSpacing: "0.01em",
-    },
+body1: {
+  fontSize: "1.28rem",
+  lineHeight: 1.9,
+  color: "#1E293B",
+  letterSpacing: "0.01em",
+},
+body2: {
+  fontSize: "1.08rem",
+  lineHeight: 1.8,
+  color: "#475569",
+  letterSpacing: "0.008em",
+},
 
     // Buttons
     button: {
@@ -83,7 +83,11 @@ const theme = createTheme({
   shadows: Array(25).fill("none") as any,
    components: {
   MuiCssBaseline: {
+    
     styleOverrides: {
+      html: {
+  scrollBehavior: "smooth",
+},
       blockquote: {
         margin: "28px 0",
         padding: "18px 22px",

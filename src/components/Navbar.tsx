@@ -15,7 +15,8 @@ export default function Navbar() {
       elevation={0}
       sx={{
         backdropFilter: "blur(10px)",
-        borderBottom: "1px solid rgba(148,163,184,0.1)",
+        borderBottom: "1px solid rgba(67, 74, 83, 0.1)",
+        backgroundColor: "#FFFFFF !important",
       }}
     >
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>

@@ -36,7 +36,7 @@ export default function MyApp({ Component, pageProps }: any) {
           flexDirection="column"
           minHeight="100vh"
           sx={{
-            background: "#f9fafb",
+            background:   "radial-gradient(circle at top left, #FFF7ED 0%, transparent 28%), radial-gradient(circle at top right, #E0F2FE 0%, transparent 30%), linear-gradient(to bottom, #F8FBFF 0%, #F3F8FF 100%)",
             backgroundAttachment: "fixed",
           }}
         >

@@ -18,6 +18,7 @@ export default function EditPost() {
     coverImage: "",
     html: "",
     tags: "",
+    sideNotes: "[]",
   });
 
   const [loading, setLoading] = useState(false);
@@ -49,6 +50,7 @@ export default function EditPost() {
           coverImage: item.coverImage || "",
           html: item.html || "",
           tags: Array.isArray(item.tags) ? item.tags.join(", ") : "",
+          sideNotes: JSON.stringify(item.sideNotes || [], null, 2),
         });
       } catch (err) {
         console.error("Failed to load post:", err);
@@ -63,6 +65,20 @@ export default function EditPost() {
   const handleSave = async () => {
     try {
       setLoading(true);
+
+      let parsedSideNotes = [];
+      try {
+        parsedSideNotes = JSON.parse(post.sideNotes || "[]");
+        if (!Array.isArray(parsedSideNotes)) {
+          alert("Side Notes must be a JSON array.");
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        alert("Side Notes JSON is invalid.");
+        setLoading(false);
+        return;
+      }
 
       const payload = {
         pk: isNew ? `POST#${new Date().toISOString().slice(0, 7)}` : post.pk,
@@ -79,6 +95,7 @@ export default function EditPost() {
           .split(",")
           .map((t) => t.trim())
           .filter(Boolean),
+        sideNotes: parsedSideNotes,
       };
 
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
@@ -159,9 +176,20 @@ export default function EditPost() {
       <TextField
         label="Tags (comma-separated)"
         fullWidth
-        sx={{ mb: 3 }}
+        sx={{ mb: 2 }}
         value={post.tags}
         onChange={(e) => setPost({ ...post, tags: e.target.value })}
+      />
+
+      <TextField
+        label="Side Notes JSON"
+        fullWidth
+        multiline
+        minRows={8}
+        sx={{ mb: 3 }}
+        value={post.sideNotes}
+        onChange={(e) => setPost({ ...post, sideNotes: e.target.value })}
+        helperText='Example: [{"targetId":"summary","title":"Summary note","content":"This section is intentionally spoiler-light."}]'
       />
 
       <Button variant="contained" onClick={handleSave} disabled={loading}>
