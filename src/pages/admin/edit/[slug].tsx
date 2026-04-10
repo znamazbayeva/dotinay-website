@@ -1,13 +1,10 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { Container, TextField, Button, Typography } from "@mui/material";
 
 export default function EditPost() {
   const router = useRouter();
-  const params = useParams();
-  const slug = params.slug as string;
+  const slug = typeof router.query.slug === "string" ? router.query.slug : "";
   const isNew = slug === "new";
 
   const [post, setPost] = useState({
@@ -24,7 +21,9 @@ export default function EditPost() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem("isAdmin") !== "true") {
+    if (!router.isReady) return;
+
+    if (typeof window !== "undefined" && localStorage.getItem("isAdmin") !== "true") {
       router.push("/admin/login");
       return;
     }
@@ -39,8 +38,10 @@ export default function EditPost() {
 
         const data = await res.json();
         const item = Array.isArray(data)
-          ? data.find((p) => p.slug === slug) || data[0]
+          ? data.find((p: any) => p.slug === slug) || data[0]
           : data;
+
+        if (!item) return;
 
         setPost({
           pk: item.pk || "",
@@ -57,10 +58,10 @@ export default function EditPost() {
       }
     }
 
-    if (!isNew) {
+    if (slug && !isNew) {
       loadPost();
     }
-  }, [slug, isNew, router]);
+  }, [router, slug, isNew]);
 
   const handleSave = async () => {
     try {
@@ -74,7 +75,7 @@ export default function EditPost() {
           setLoading(false);
           return;
         }
-      } catch (err) {
+      } catch {
         alert("Side Notes JSON is invalid.");
         setLoading(false);
         return;
@@ -122,6 +123,10 @@ export default function EditPost() {
       setLoading(false);
     }
   };
+
+  if (!router.isReady) {
+    return null;
+  }
 
   return (
     <Container maxWidth="md" sx={{ py: 8 }}>
