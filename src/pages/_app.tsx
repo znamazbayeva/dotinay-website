@@ -13,10 +13,11 @@ const patrickHand = Patrick_Hand({
 });
 
 export default function MyApp({ Component, pageProps }: any) {
-  const [loading, setLoading] = useState(true);
+  const [showLoader, setShowLoader] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000);
+    setShowLoader(true);
+    const timer = setTimeout(() => setShowLoader(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -41,7 +42,7 @@ export default function MyApp({ Component, pageProps }: any) {
         </Box>
         <Footer />
 
-        {loading && (
+        {showLoader && (
           <Box
             sx={{
               position: "fixed",
