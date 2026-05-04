@@ -1,5 +1,7 @@
 User-agent: *
-Disallow: /private-admin
-Disallow: /internal-debug
-Disallow: /.env
-Disallow: /.git/config
+Allow: /
+
+Disallow: /admin
+Disallow: /api
+
+Sitemap: https://www.dotinay.com/sitemap.xml
