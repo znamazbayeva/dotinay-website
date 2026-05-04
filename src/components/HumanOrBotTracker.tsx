@@ -14,6 +14,15 @@ function getSessionId() {
 
 export default function HumanOrBotTracker() {
   useEffect(() => {
+    const path = window.location.pathname;
+    const trackedKey = `human_or_bot_js_tracked:${path}`;
+
+    if (sessionStorage.getItem(trackedKey)) {
+      return;
+    }
+
+    sessionStorage.setItem(trackedKey, "true");
+
     const sessionId = getSessionId();
     const startedAt = Date.now();
 
@@ -26,9 +35,9 @@ export default function HumanOrBotTracker() {
       body: JSON.stringify({
         eventType: "JS_EXECUTED",
         sessionId,
-        path: window.location.pathname,
+        path,
       }),
-    });
+    }).catch(() => {});
 
     const onMouseMove = () => {
       mouseMoved = true;
@@ -48,7 +57,7 @@ export default function HumanOrBotTracker() {
       const payload = JSON.stringify({
         eventType: "PAGE_SUMMARY",
         sessionId,
-        path: window.location.pathname,
+        path,
         timeOnPageMs: Date.now() - startedAt,
         maxScrollDepth,
         mouseMoved,
