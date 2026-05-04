@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /private-admin
+Disallow: /internal-debug
+Disallow: /.env
+Disallow: /.git/config

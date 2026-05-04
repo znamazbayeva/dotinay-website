@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { Patrick_Hand } from "next/font/google";
 import { useState, useEffect } from "react";
 import Loader from "../components/Loader";
+import HumanOrBotTracker from "../components/HumanOrBotTracker";
 
 const patrickHand = Patrick_Hand({
   subsets: ["latin"],
@@ -23,7 +24,9 @@ export default function MyApp({ Component, pageProps }: any) {
 
   return (
     <ThemeProvider theme={theme}>
+      <HumanOrBotTracker />
       <CssBaseline />
+
       <Box
         className={patrickHand.className}
         display="flex"
@@ -36,10 +39,27 @@ export default function MyApp({ Component, pageProps }: any) {
           position: "relative",
         }}
       >
+        <a
+          href="/private-admin"
+          aria-hidden="true"
+          tabIndex={-1}
+          style={{
+            position: "absolute",
+            left: "-9999px",
+            width: 1,
+            height: 1,
+            overflow: "hidden",
+          }}
+        >
+          private admin
+        </a>
+
         <Navbar />
+
         <Box component="main" flexGrow={1}>
           <Component {...pageProps} />
         </Box>
+
         <Footer />
 
         {showLoader && (
